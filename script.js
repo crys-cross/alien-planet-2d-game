@@ -38,7 +38,7 @@ window.addEventListener(`load`, function () {
       this.width = 10;
       this.height = 3;
       this.speed = 3;
-      this.markedOforDeletion = fales;
+      this.markedOforDeletion = false;
     }
     update() {
       this.x += this.speed;
@@ -101,7 +101,21 @@ window.addEventListener(`load`, function () {
   // pull all layer objects together(animate entire game world)
   class Background {}
   // draw score, timer and other information displayed for the user
-  class UI {}
+  class UI {
+    constructor(game) {
+      this.game = game;
+      this.fontSize = 25;
+      this.fontFamily = "Helvetica";
+      this.color = "yellow";
+    }
+    draw(context) {
+      // ammo
+      context.fillStyle = this.color;
+      for (let i = 0; i < this.game.ammo; i++) {
+        context.fillRect(20 + 5 * i, 50, 3, 20);
+      }
+    }
+  }
   // logic will come together here(brain of project)
   class Game {
     constructor(width, height) {
@@ -109,24 +123,38 @@ window.addEventListener(`load`, function () {
       this.height = height;
       this.player = new Player(this);
       this.input = new InputHandler(this);
+      this.ui = new UI(this);
       this.keys = [];
       this.ammo = 20;
+      this.maxAmmo = 50;
+      this.ammoTimer = 0;
+      this.ammoInterval = 500;
     }
-    update() {
+    update(deltaTime) {
       this.player.update();
+      if (this.ammoTimer > this.ammoInterval) {
+        if (this.ammo < this.maxAmmo) this.ammo++;
+        this.ammoTimer = 0;
+      } else {
+        this.ammoTimer += deltaTime;
+      }
     }
     draw(context) {
       this.player.draw(context);
+      this.ui.draw(context);
     }
   }
 
   const game = new Game(canvas.width, canvas.height);
+  let lastTime = 0;
   // animation loop
-  function animate() {
+  function animate(timeStamp) {
+    const deltaTime = timeStamp - lastTime;
+    lastTime = timeStamp;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    game.update();
+    game.update(deltaTime);
     game.draw(ctx);
     requestAnimationFrame(animate);
   }
-  animate();
+  animate(0);
 });
