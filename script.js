@@ -46,7 +46,7 @@ window.addEventListener(`load`, function () {
     }
     draw(context) {
       context.fillStyle = "yellow";
-      fillRect(this.x, this.y, this.width, this.height);
+      context.fillRect(this.x, this.y, this.width, this.height);
     }
   }
   // deal with debris from damaging enemies
@@ -61,7 +61,7 @@ window.addEventListener(`load`, function () {
       this.y = 100;
       this.speedY = 1;
       this.maxSpeed = 3;
-      this.projectile = [];
+      this.projectiles = [];
     }
     update() {
       if (this.game.keys.includes(`ArrowUp`)) this.speedY = -this.maxSpeed;
@@ -69,17 +69,29 @@ window.addEventListener(`load`, function () {
         this.speedY = this.maxSpeed;
       else this.speedY = 0;
       this.y += this.speedY;
-      // handle projectile
-      this.projectile.forEach((projectile) => {
-        projectile.update();
+      // handle projectiles
+      this.projectiles.forEach((projectiles) => {
+        projectiles.update();
       });
+      this.projectiles = this.projectiles.filter(
+        (projectiles) => !projectiles.markedOforDeletion
+      );
     }
     draw(context) {
       context.fillStyle = "black";
       context.fillRect(this.x, this.y, this.width, this.height);
+      this.projectiles.forEach((projectiles) => {
+        projectiles.draw(context);
+      });
     }
     shootTop() {
-      this.projectile.push(new Projectile(this.game, this.x, this.y));
+      if (this.game.ammo > 0) {
+        this.projectiles.push(
+          new Projectile(this.game, this.x + 80, this.y + 30)
+        );
+        this.game.ammo--;
+      }
+      console.log(this.projectiles);
     }
   }
   // main blueprint handling many different enemy types
@@ -98,6 +110,7 @@ window.addEventListener(`load`, function () {
       this.player = new Player(this);
       this.input = new InputHandler(this);
       this.keys = [];
+      this.ammo = 20;
     }
     update() {
       this.player.update();
