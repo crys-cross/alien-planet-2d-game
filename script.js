@@ -117,8 +117,8 @@ window.addEventListener(`load`, function () {
     constructor(game) {
       /*super make sure constructor from parent class also gets executed here*/
       super(game);
-      this.width = 228;
-      this.height = 169;
+      this.width = 228 * 0.2;
+      this.height = 169 * 0.2;
       this.y = Math.random() * (this.game.height * 0.9 - this.height);
     }
   }
@@ -152,10 +152,13 @@ window.addEventListener(`load`, function () {
       this.ui = new UI(this);
       this.keys = [];
       this.enemies = [];
+      this.enemyTimer = 0;
+      this.enemyInterval = 1000;
       this.ammo = 20;
       this.maxAmmo = 50;
       this.ammoTimer = 0;
       this.ammoInterval = 500;
+      this.gameOver = false;
     }
     update(deltaTime) {
       this.player.update();
@@ -169,6 +172,12 @@ window.addEventListener(`load`, function () {
         enemy.update();
       });
       this.enemies = this.enemies.filter((enemy) => !enemy.markedOforDeletion);
+      if (this.enemyTimer > this.enemyInterval && !this.gameOver) {
+        this.addEnemy();
+        this.enemyTimer = 0;
+      } else {
+        this.enemyTimer += deltaTime;
+      }
     }
     draw(context) {
       this.player.draw(context);
@@ -177,7 +186,9 @@ window.addEventListener(`load`, function () {
         enemy.draw(context);
       });
     }
-    // addEnemy
+    addEnemy() {
+      this.enemies.push(new Angler1(this));
+    }
   }
 
   const game = new Game(canvas.width, canvas.height);
