@@ -95,7 +95,33 @@ window.addEventListener(`load`, function () {
     }
   }
   // main blueprint handling many different enemy types
-  class Enemy {}
+  /*Parent class(SUPER)*/
+  class Enemy {
+    constructor(game) {
+      this.game = game;
+      this.x = this.game.width;
+      this.speedX = Math.random * -1.5 - 0.5;
+      this.markedOforDeletion = false;
+    }
+    update() {
+      this.x += this.speedX;
+      if (this.x + this.width < 0) this.markedOforDeletion = true;
+    }
+    draw(context) {
+      context.fillstyle = "red";
+      context.fillRect(this.x, this.y, this.width, this.height);
+    }
+  }
+  /*Child class(SUB)*/
+  class Angler1 extends Enemy {
+    constructor(game) {
+      /*super make sure constructor from parent class also gets executed here*/
+      super(game);
+      this.width = 228;
+      this.height = 169;
+      this.y = Math.random() * (this.game.height * 0.9 - this.height);
+    }
+  }
   // handle individual background layers(paralax)
   class Layer {}
   // pull all layer objects together(animate entire game world)
@@ -125,6 +151,7 @@ window.addEventListener(`load`, function () {
       this.input = new InputHandler(this);
       this.ui = new UI(this);
       this.keys = [];
+      this.enemies = [];
       this.ammo = 20;
       this.maxAmmo = 50;
       this.ammoTimer = 0;
@@ -138,11 +165,19 @@ window.addEventListener(`load`, function () {
       } else {
         this.ammoTimer += deltaTime;
       }
+      this.enemies.forEach((enemy) => {
+        enemy.update();
+      });
+      this.enemies = this.enemies.filter((enemy) => !enemy.markedOforDeletion);
     }
     draw(context) {
       this.player.draw(context);
       this.ui.draw(context);
+      this.enemies.forEach((enemy) => {
+        enemy.draw(context);
+      });
     }
+    // addEnemy
   }
 
   const game = new Game(canvas.width, canvas.height);
