@@ -137,14 +137,23 @@ window.addEventListener(`load`, function () {
       this.game = game;
       this.fontSize = 25;
       this.fontFamily = "Helvetica";
-      this.color = "yellow";
+      this.color = "white";
     }
     draw(context) {
-      // ammo
+      context.save();
       context.fillStyle = this.color;
+      context.shadowOfsetX = 2;
+      context.shadowOfsetY = 2;
+      context.shadowColor = "black";
+      context.font = this.fontSize + "px" + this.fontFamily;
+      // score
+      context.fillText("Score: " + this.game.score, 20, 40);
+      // ammo
+
       for (let i = 0; i < this.game.ammo; i++) {
         context.fillRect(20 + 5 * i, 50, 3, 20);
       }
+      context.restore();
     }
   }
   // logic will come together here(brain of project)
@@ -164,6 +173,8 @@ window.addEventListener(`load`, function () {
       this.ammoTimer = 0;
       this.ammoInterval = 500;
       this.gameOver = false;
+      this.score = 0;
+      this.winningScore = 10;
     }
     update(deltaTime) {
       this.player.update();
@@ -185,6 +196,7 @@ window.addEventListener(`load`, function () {
             if (enemy.lives <= 0) {
               enemy.markedOforDeletion = true;
               this.score += enemy.score;
+              if (this.score > this.winningScore) this.gameOver = true;
             }
           }
         });
