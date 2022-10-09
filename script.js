@@ -91,7 +91,6 @@ window.addEventListener(`load`, function () {
         );
         this.game.ammo--;
       }
-      console.log(this.projectiles);
     }
   }
   // main blueprint handling many different enemy types
@@ -110,7 +109,7 @@ window.addEventListener(`load`, function () {
       if (this.x + this.width < 0) this.markedOforDeletion = true;
     }
     draw(context) {
-      context.fillstyle = "red";
+      context.fillstyle = "yellow";
       context.fillRect(this.x, this.y, this.width, this.height);
       context.fillStyle = "black";
       context.font = "20px Helvetica";
@@ -243,6 +242,7 @@ window.addEventListener(`load`, function () {
     }
     addEnemy() {
       this.enemies.push(new Angler1(this));
+      console.log(this.enemies);
     }
     checkCollision(rect1, rect2) {
       return (
