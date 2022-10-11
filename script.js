@@ -111,9 +111,9 @@ window.addEventListener(`load`, function () {
     draw(context) {
       context.fillStyle = "red";
       context.fillRect(this.x, this.y, this.width, this.height);
-      // context.fillStyle = "black";
-      // context.font = "20px Helvetica";
-      // context.fillText(this.lives, this.x, this.y);
+      context.fillStyle = "black";
+      context.font = "20px Helvetica";
+      context.fillText(this.lives, this.x, this.y);
     }
   }
   /*Child class(SUB)*/
@@ -199,8 +199,12 @@ window.addEventListener(`load`, function () {
       this.gameOver = false;
       this.score = 0;
       this.winningScore = 10;
+      this.gameTime = 0;
+      this.timeLimit = 5000;
     }
     update(deltaTime) {
+      if (!this.gameOver) this.gameTime += deltaTime;
+      if (this.gameTime > this.timeLimit) this.gameOver = true;
       this.player.update();
       if (this.ammoTimer > this.ammoInterval) {
         if (this.ammo < this.maxAmmo) this.ammo++;
@@ -210,21 +214,21 @@ window.addEventListener(`load`, function () {
       }
       this.enemies.forEach((enemy) => {
         enemy.update();
+        if (this.checkCollision(this.player, enemy)) {
+          enemy.markedOforDeletion = true;
+        }
+        this.player.projectiles.forEach((projectile) => {
+          if (this.checkCollision(projectile, enemy)) {
+            enemy.lives--;
+            projectile.markedOforDeletion = true;
+            if (enemy.lives <= 0) {
+              enemy.markedOforDeletion = true;
+              this.score += enemy.score;
+              if (this.score > this.winningScore) this.gameOver = true;
+            }
+          }
+        });
       });
-      // if (this.checkCollision(this.player, enemy)) {
-      //   enemy.markedOforDeletion = true;
-      // }
-      // this.player.projectiles.forEach((projectile) => {
-      //   if (this.checkCollision(projectile, enemy)) {
-      //     enemy.lives--;
-      //     projectile.markedOforDeletion = true;
-      //     if (enemy.lives <= 0) {
-      //       enemy.markedOforDeletion = true;
-      //       this.score += enemy.score;
-      //       if (this.score > this.winningScore) this.gameOver = true;
-      //     }
-      //   }
-      // });
       this.enemies = this.enemies.filter((enemy) => !enemy.markedOforDeletion);
       if (this.enemyTimer > this.enemyInterval && !this.gameOver) {
         this.addEnemy();
@@ -242,7 +246,7 @@ window.addEventListener(`load`, function () {
     }
     addEnemy() {
       this.enemies.push(new Angler1(this));
-      console.log(this.enemies);
+      // console.log(this.enemies);
     }
     checkCollision(rect1, rect2) {
       return (
@@ -253,7 +257,7 @@ window.addEventListener(`load`, function () {
       );
     }
   }
-
+  console.log(Enemy);
   const game = new Game(canvas.width, canvas.height);
   let lastTime = 0;
   // animation loop
