@@ -38,11 +38,11 @@ window.addEventListener(`load`, function () {
       this.width = 10;
       this.height = 3;
       this.speed = 3;
-      this.markedOforDeletion = false;
+      this.markedForDeletion = false;
     }
     update() {
       this.x += this.speed;
-      if (this.x > this.game.width * 0.8) this.markedOforDeletion = true;
+      if (this.x > this.game.width * 0.8) this.markedForDeletion = true;
     }
     draw(context) {
       context.fillStyle = "yellow";
@@ -74,7 +74,7 @@ window.addEventListener(`load`, function () {
         projectiles.update();
       });
       this.projectiles = this.projectiles.filter(
-        (projectiles) => !projectiles.markedOforDeletion
+        (projectiles) => !projectiles.markedForDeletion
       );
     }
     draw(context) {
@@ -100,13 +100,13 @@ window.addEventListener(`load`, function () {
       this.game = game;
       this.x = this.game.width;
       this.speedX = Math.random * -1.5 - 0.5;
-      this.markedOforDeletion = false;
+      this.markedForDeletion = false;
       this.lives = 5;
       this.score = this.lives;
     }
     update() {
       this.x += this.speedX;
-      if (this.x + this.width < 0) this.markedOforDeletion = true;
+      if (this.x + this.width < 0) this.markedForDeletion = true;
     }
     draw(context) {
       context.fillStyle = "red";
@@ -127,7 +127,24 @@ window.addEventListener(`load`, function () {
     }
   }
   // handle individual background layers(paralax)
-  class Layer {}
+  class Layer {
+    constructor(game, image, speedModifier) {
+      this.game = game;
+      this.image = image;
+      this.speedModifier = speedModifier;
+      this.width = 1768;
+      this.height = 500;
+      this.x = 0;
+      this.y = 0;
+    }
+    update() {
+      if (this.x <= -this.width) this.x = 0;
+      else this.x -= this.game.speed * this.speedModifier;
+    }
+    draw() {
+      context.drawImage(this.image, this.x, this.y);
+    }
+  }
   // pull all layer objects together(animate entire game world)
   class Background {}
   // draw score, timer and other information displayed for the user
@@ -204,6 +221,7 @@ window.addEventListener(`load`, function () {
       this.winningScore = 10;
       this.gameTime = 0;
       this.timeLimit = 5000;
+      this.speed = 1;
     }
     update(deltaTime) {
       if (!this.gameOver) this.gameTime += deltaTime;
@@ -218,14 +236,14 @@ window.addEventListener(`load`, function () {
       this.enemies.forEach((enemy) => {
         enemy.update();
         if (this.checkCollision(this.player, enemy)) {
-          enemy.markedOforDeletion = true;
+          enemy.markedForDeletion = true;
         }
         this.player.projectiles.forEach((projectile) => {
           if (this.checkCollision(projectile, enemy)) {
             enemy.lives--;
-            projectile.markedOforDeletion = true;
+            projectile.markedForDeletion = true;
             if (enemy.lives <= 0) {
-              enemy.markedOforDeletion = true;
+              enemy.markedForDeletion = true;
               this.score += enemy.score;
               if (!this.gameOver) this.score += enemy.score;
               if (this.score > this.winningScore) this.gameOver = true;
@@ -233,7 +251,7 @@ window.addEventListener(`load`, function () {
           }
         });
       });
-      this.enemies = this.enemies.filter((enemy) => !enemy.markedOforDeletion);
+      this.enemies = this.enemies.filter((enemy) => !enemy.markedForDeletion);
       if (this.enemyTimer > this.enemyInterval && !this.gameOver) {
         this.addEnemy();
         this.enemyTimer = 0;
