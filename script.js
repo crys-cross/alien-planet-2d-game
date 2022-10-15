@@ -25,7 +25,7 @@ window.addEventListener(`load`, function () {
         if (this.game.keys.indexOf(e.key) > -1) {
           this.game.keys.splice(this.game.keys.indexOf(e.key), 1);
         }
-        console.log(this.game.keys);
+        // console.log(this.game.keys);
       });
     }
   }
@@ -109,7 +109,7 @@ window.addEventListener(`load`, function () {
       if (this.x + this.width < 0) this.markedForDeletion = true;
     }
     draw(context) {
-      context.fillStyle = "red";
+      context.fillStyle = "#FF0000";
       context.fillRect(this.x, this.y, this.width, this.height);
       context.fillStyle = "black";
       context.font = "20px Helvetica";
@@ -155,10 +155,10 @@ window.addEventListener(`load`, function () {
       this.image2 = document.getElementById("layer2");
       this.image3 = document.getElementById("layer3");
       this.image4 = document.getElementById("layer4");
-      this.layer1 = new Layer(this.game, this.image1, 3);
-      this.layer2 = new Layer(this.game, this.image2, 3);
-      this.layer3 = new Layer(this.game, this.image3, 3);
-      this.layer4 = new Layer(this.game, this.image4, 3);
+      this.layer1 = new Layer(this.game, this.image1, 0.2);
+      this.layer2 = new Layer(this.game, this.image2, 0.4);
+      this.layer3 = new Layer(this.game, this.image3, 1);
+      this.layer4 = new Layer(this.game, this.image4, 1.5);
       this.layers = [this.layer1, this.layer2, this.layer3, this.layer4];
     }
     update() {
@@ -249,6 +249,7 @@ window.addEventListener(`load`, function () {
       if (!this.gameOver) this.gameTime += deltaTime;
       if (this.gameTime > this.timeLimit) this.gameOver = true;
       this.background.update();
+      this.background.layer4.update;
       this.player.update();
       if (this.ammoTimer > this.ammoInterval) {
         if (this.ammo < this.maxAmmo) this.ammo++;
@@ -289,6 +290,7 @@ window.addEventListener(`load`, function () {
       this.enemies.forEach((enemy) => {
         enemy.draw(context);
       });
+      this.background.layer4.draw(context);
     }
     addEnemy() {
       this.enemies.push(new Angler1(this));
@@ -303,7 +305,7 @@ window.addEventListener(`load`, function () {
       );
     }
   }
-  console.log(Enemy);
+  // console.log(Enemy);
   const game = new Game(canvas.width, canvas.height);
   let lastTime = 0;
   // animation loop
