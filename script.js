@@ -19,7 +19,7 @@ window.addEventListener(`load`, function () {
         } else if (e.key === " ") {
           this.game.player.shootTop();
         }
-        console.log(this.game.keys);
+        // console.log(this.game.keys);
       });
       window.addEventListener(`keyup`, (e) => {
         if (this.game.keys.indexOf(e.key) > -1) {
@@ -114,6 +114,7 @@ window.addEventListener(`load`, function () {
       context.fillStyle = "black";
       context.font = "20px Helvetica";
       context.fillText(this.lives, this.x, this.y);
+      console.log(context.fillStyle);
     }
   }
   /*Child class(SUB)*/
@@ -139,10 +140,11 @@ window.addEventListener(`load`, function () {
     }
     update() {
       if (this.x <= -this.width) this.x = 0;
-      else this.x -= this.game.speed * this.speedModifier;
+      this.x -= this.game.speed * this.speedModifier;
     }
     draw(context) {
       context.drawImage(this.image, this.x, this.y);
+      context.drawImage(this.image, this.x + this.width, this.y);
     }
   }
   // pull all layer objects together(animate entire game world)
@@ -150,8 +152,14 @@ window.addEventListener(`load`, function () {
     constructor(game) {
       this.game = game;
       this.image1 = document.getElementById("layer1");
-      this.layer1 = new Layer(this.game, this.image1, 1);
-      this.layers = [this.layer1];
+      this.image2 = document.getElementById("layer2");
+      this.image3 = document.getElementById("layer3");
+      this.image4 = document.getElementById("layer4");
+      this.layer1 = new Layer(this.game, this.image1, 3);
+      this.layer2 = new Layer(this.game, this.image2, 3);
+      this.layer3 = new Layer(this.game, this.image3, 3);
+      this.layer4 = new Layer(this.game, this.image4, 3);
+      this.layers = [this.layer1, this.layer2, this.layer3, this.layer4];
     }
     update() {
       this.layers.forEach((layer) => layer.update());
