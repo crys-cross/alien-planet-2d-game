@@ -148,6 +148,7 @@ window.addEventListener(`load`, function () {
       this.width = 228;
       this.height = 169;
       this.y = Math.random() * (this.game.height * 0.9 - this.height);
+      this.image = 1;
     }
   }
   // handle individual background layers(paralax)
