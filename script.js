@@ -3,7 +3,7 @@ window.addEventListener(`load`, function () {
   const canvas = document.getElementById("canvas1");
   //drawing context
   const ctx = canvas.getContext(`2d`);
-  canvas.width = 1500;
+  canvas.width = 700;
   canvas.height = 500;
 
   // keep track of specified user input(arrow keys)
@@ -126,15 +126,34 @@ window.addEventListener(`load`, function () {
       this.markedForDeletion = false;
       this.lives = 5;
       this.score = this.lives;
+      this.frameX = 0;
+      this.frameY = 0;
+      this.maxFrame = 37;
     }
     update() {
-      this.x += this.speedX;
+      this.x += this.speedX - this.game.speed;
       if (this.x + this.width < 0) this.markedForDeletion = true;
+      // sprite animation
+      if (this.frameX < this.maxFrame) {
+        this.frameX++;
+      } else {
+        this.frameX = 0;
+      }
     }
     draw(context) {
-      context.fillStyle = "#FF0000";
-      context.fillRect(this.x, this.y, this.width, this.height);
-      context.fillStyle = "black";
+      if (this.game.debug)
+        context.strokeRect(this.x, this.y, this.width, this.height);
+      context.drawImage(
+        this.image,
+        this.frameX * this.width,
+        this.frameY * this.height,
+        this.width,
+        this.height,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );
       context.font = "20px Helvetica";
       context.fillText(this.lives, this.x, this.y);
       console.log(context.fillStyle);
@@ -148,7 +167,8 @@ window.addEventListener(`load`, function () {
       this.width = 228;
       this.height = 169;
       this.y = Math.random() * (this.game.height * 0.9 - this.height);
-      this.image = 1;
+      this.image = document.getElementById("angler1");
+      this.frameY = Math.floor(Math.random() * 3);
     }
   }
   // handle individual background layers(paralax)
