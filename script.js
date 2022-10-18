@@ -185,6 +185,20 @@ window.addEventListener(`load`, function () {
       this.score = this.lives;
     }
   }
+  class LuckyFish extends Enemy {
+    constructor(game) {
+      /*super make sure constructor from parent class also gets executed here*/
+      super(game);
+      this.width = 99;
+      this.height = 95;
+      this.y = Math.random() * (this.game.height * 0.9 - this.height);
+      this.image = document.getElementById("lucky");
+      this.frameY = Math.floor(Math.random() * 3);
+      this.lives = 3;
+      this.score = 15;
+      this.type = "lucky";
+    }
+  }
   // handle individual background layers(paralax)
   class Layer {
     constructor(game, image, speedModifier) {
@@ -353,8 +367,9 @@ window.addEventListener(`load`, function () {
     }
     addEnemy() {
       const randomize = Math.random();
-      if (randomize < 0.5) this.enemies.push(new Angler1(this));
-      else this.enemies.push(new Angler2(this));
+      if (randomize < 0.3) this.enemies.push(new Angler1(this));
+      else if (randomize < 0.6) this.enemies.push(new Angler2(this));
+      else this.enemies.push(new LuckyFish(this));
       // console.log(this.enemies);
     }
     checkCollision(rect1, rect2) {
