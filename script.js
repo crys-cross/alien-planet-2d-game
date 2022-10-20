@@ -78,6 +78,10 @@ window.addEventListener(`load`, function () {
         this.speedY = this.maxSpeed;
       else this.speedY = 0;
       this.y += this.speedY;
+      // vertical bounderies
+      if (this.y > this.game.height - this.height * 0.5)
+        this.y = this.game.height - this.height * 0.5;
+      else if (this.y < -this.height * 0.5) this.y = -this.height * 0.5;
       // handle projectiles
       this.projectiles.forEach((projectiles) => {
         projectiles.update();
@@ -153,7 +157,6 @@ window.addEventListener(`load`, function () {
       this.x = this.game.width;
       this.speedX = Math.random * -1.5 - 0.5;
       this.markedForDeletion = false;
-
       this.frameX = 0;
       this.frameY = 0;
       this.maxFrame = 37;
@@ -182,9 +185,11 @@ window.addEventListener(`load`, function () {
         this.width,
         this.height
       );
-      context.font = "20px Helvetica";
-      context.fillText(this.lives, this.x, this.y);
-      console.log(context.fillStyle);
+      if (this.game.debug) {
+        context.font = "20px Helvetica";
+        context.fillText(this.lives, this.x, this.y);
+      }
+      // console.log(context.fillStyle);
     }
   }
   /*Child class(SUB)*/
