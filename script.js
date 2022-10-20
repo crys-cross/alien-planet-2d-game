@@ -52,7 +52,46 @@ window.addEventListener(`load`, function () {
     }
   }
   // deal with debris from damaging enemies
-  class Particle {}
+  class Particle {
+    constructor(game, x, y) {
+      this.game = game;
+      this.x = x;
+      this.y = y;
+      this.image = document.getElementById("gears");
+      this.frameX = Math.floor(Math.random() * 3);
+      this.frameY = Math.floor(Math.random() * 3);
+      this.spriteSize = 50;
+      this.sizeModifier = (Math.random() * 0.5 + 0.5).toFixed(1);
+      this.size = this.spriteSize * this.sizeModifier;
+      this.speedX = Math.random() * 6 - 3;
+      this.speedX = Math.random() * -15;
+      this.gravity = 0.5;
+      this.markedForDeletion = false;
+      this.angle = 0;
+      this.va = Math.random() * 2 - 0.1;
+    }
+    update() {
+      this.angle += this.va;
+      this.speedY = this.gravity;
+      this.x -= this.speedX;
+      this.y += this.speedY;
+      if (this.y > this.game.height + this.size || this.x < 0 - this.size)
+        this.markedForDeletion = true;
+    }
+    draw(context) {
+      context.drawImage(
+        this.image,
+        this.frameX * this.spriteSize,
+        this.frameY * this.spriteSize,
+        this.spriteSize,
+        this.spriteSize,
+        this.x,
+        this.y,
+        this.size,
+        this.size
+      );
+    }
+  }
   // control the main character
   class Player {
     constructor(game) {
@@ -338,6 +377,7 @@ window.addEventListener(`load`, function () {
       this.ui = new UI(this);
       this.keys = [];
       this.enemies = [];
+      this.particles = [];
       this.enemyTimer = 0;
       this.enemyInterval = 1000;
       this.ammo = 20;
@@ -406,7 +446,7 @@ window.addEventListener(`load`, function () {
       if (randomize < 0.3) this.enemies.push(new Angler1(this));
       else if (randomize < 0.6) this.enemies.push(new Angler2(this));
       else this.enemies.push(new LuckyFish(this));
-      // console.log(this.enemies);
+      console.log(this.enemies);
     }
     checkCollision(rect1, rect2) {
       return (
@@ -428,6 +468,7 @@ window.addEventListener(`load`, function () {
     game.update(deltaTime);
     game.draw(ctx);
     requestAnimationFrame(animate);
+    // console.log(deltaTime);
   }
   animate(0);
 });
